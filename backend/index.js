@@ -28,7 +28,7 @@ export default async function handler(req, res) {
 
     // Optional: verify SMTP connection
     await transporter.verify();
-
+    console.log("SMTP connection OK");
     // Email options
     const mailOptions = {
       from: `"Portfolio Contact" <${process.env.ROYAL_EMAIL}>`,
