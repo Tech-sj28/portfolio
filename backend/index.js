@@ -1,36 +1,35 @@
 import nodemailer from "nodemailer";
 
-// Serverless function handler
 export default async function handler(req, res) {
-  // Only allow POST requests
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
+  console.log("API called with body:", req.body);
+
+  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
   const { name, email, message } = req.body;
+  if (!name || !email || !message) return res.status(400).json({ error: "All fields required" });
 
-  // Validate input
-  if (!name || !email || !message) {
-    return res.status(400).json({ error: "All fields are required" });
-  }
+  console.log("ENV VARS:", {
+    SMTP_HOST: process.env.SMTP_HOST,
+    SMTP_PORT: process.env.SMTP_PORT,
+    ROYAL_EMAIL: process.env.ROYAL_EMAIL,
+    SMTP_PASS_EXISTS: !!process.env.SMTP_PASS,
+  });
 
   try {
-    // Create transporter for SMTP
     const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,        // e.g., smtp.gmail.com
-      port: process.env.SMTP_PORT || 587, // 465 for SSL, 587 for TLS
-      secure: process.env.SMTP_PORT == 465, // true for 465
+      host: process.env.SMTP_HOST,
+      port: Number(process.env.SMTP_PORT),
+      secure: process.env.SMTP_PORT == 465,
       auth: {
-        user: process.env.ROYAL_EMAIL,    // your email
-        pass: process.env.SMTP_PASS,      // App password (Gmail 2FA required)
+        user: process.env.ROYAL_EMAIL,
+        pass: process.env.SMTP_PASS,
       },
     });
 
-    // Optional: verify SMTP connection
-    await transporter.verify();
+    await transporter.verify(); // Will throw if SMTP fails
     console.log("SMTP connection OK");
-    // Email options
-    const mailOptions = {
+
+    await transporter.sendMail({
       from: `"Portfolio Contact" <${process.env.ROYAL_EMAIL}>`,
       to: process.env.ROYAL_EMAIL,
       subject: `New message from ${name}`,
@@ -38,15 +37,12 @@ export default async function handler(req, res) {
       html: `<p><strong>Name:</strong> ${name}</p>
              <p><strong>Email:</strong> ${email}</p>
              <p><strong>Message:</strong><br>${message}</p>`,
-    };
+    });
 
-    // Send email
-    await transporter.sendMail(mailOptions);
-    console.log(`Email sent from ${email}`);
-
+    console.log("Email sent successfully");
     return res.status(200).json({ message: "✅ Message sent successfully!" });
   } catch (error) {
-    console.error("Error sending email:", error);
-    return res.status(500).json({ error: "❌ Failed to send email" });
+    console.error("SMTP error:", error);
+    return res.status(500).json({ error: `❌ Failed to send email: ${error.message}` });
   }
 }
