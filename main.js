@@ -142,7 +142,7 @@ async function submitForm() {
   console.log("Sending data:", payload);
 
   try {
-    const res = await fetch("https://portfolio-kpmz7y1gm-wwwsurajpagi-gmailcoms-projects.vercel.app/api/send-email", {
+    const res = await fetch("https://portfolio-kpmz7y1gm-wwwsurajpagi-gmailcoms-projects.vercel.app/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
