@@ -90,87 +90,89 @@
   /*  CONTACT FORM VALIDATION */
 // Initialize EmailJS
 
-  (function () {
-    emailjs.init("Ss-BGP5V90JmEpUqB"); // your PUBLIC KEY
-  })();
-  
-  function submitForm() {
-    const name  = document.getElementById('f-name');
-    const email = document.getElementById('f-email');
-    const msg   = document.getElementById('f-msg');
-    const result = document.getElementById('form-result');
-    const btn = document.getElementById('submit-btn');
-  
-    let valid = true;
-  
-    // Reset errors
-    [name, email, msg].forEach(f => f.classList.remove('error-field'));
-    document.getElementById('err-name').textContent = '';
-    document.getElementById('err-email').textContent = '';
-    document.getElementById('err-msg').textContent = '';
-    result.style.display = 'none';
-  
-    // Validation
-    if (!name.value.trim()) {
-      name.classList.add('error-field');
-      document.getElementById('err-name').textContent = 'Name is required.';
-      valid = false;
-    }
-  
-    if (!email.value.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
-      email.classList.add('error-field');
-      document.getElementById('err-email').textContent = 'Enter a valid email.';
-      valid = false;
-    }
-  
-    if (!msg.value.trim() || msg.value.trim().length < 10) {
-      msg.classList.add('error-field');
-      document.getElementById('err-msg').textContent = 'Message must be at least 10 characters.';
-      valid = false;
-    }
-  
-    // Stop if invalid
-    if (!valid) return;
-  
-    // UI loading state
-    btn.innerText = "Sending...";
-    btn.disabled = true;
-  
-    // Data to send
-    const templateParams = {
-      name: name.value,
-      email: email.value,
-      message: msg.value
-    };
-  
-    console.log("Sending data:", templateParams); // DEBUG
-  
-    // Send email
-    emailjs.send("service_ly3al8s", "template_3y5ogfk", templateParams)
-      .then(function (response) {
-        console.log("SUCCESS!", response);
-  
-        result.className = 'form-msg success';
-        result.innerHTML = "✅ Message sent successfully!";
-        result.style.display = 'block';
-  
-        // Clear form
-        name.value = '';
-        email.value = '';
-        msg.value = '';
-  
-        btn.innerText = "Send Message";
-        btn.disabled = false;
-      })
-      .catch(function (error) {
-        console.error("FAILED...", error);
-  
-        result.className = 'form-msg error';
-        result.innerHTML = "❌ Failed to send message. Check console.";
-        result.style.display = 'block';
-  
-        btn.innerText = "Send Message";
-        btn.disabled = false;
-      });
+ 
+
+async function submitForm() {
+  const name  = document.getElementById('f-name');
+  const email = document.getElementById('f-email');
+  const msg   = document.getElementById('f-msg');
+  const result = document.getElementById('form-result');
+  const btn = document.getElementById('submit-btn');
+
+  let valid = true;
+
+  // Reset errors
+  [name, email, msg].forEach(f => f.classList.remove('error-field'));
+  document.getElementById('err-name').textContent = '';
+  document.getElementById('err-email').textContent = '';
+  document.getElementById('err-msg').textContent = '';
+  result.style.display = 'none';
+
+  // Validation
+  if (!name.value.trim()) {
+    name.classList.add('error-field');
+    document.getElementById('err-name').textContent = 'Name is required.';
+    valid = false;
   }
+
+  if (!email.value.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
+    email.classList.add('error-field');
+    document.getElementById('err-email').textContent = 'Enter a valid email.';
+    valid = false;
+  }
+
+  if (!msg.value.trim() || msg.value.trim().length < 10) {
+    msg.classList.add('error-field');
+    document.getElementById('err-msg').textContent = 'Message must be at least 10 characters.';
+    valid = false;
+  }
+
+  if (!valid) return;
+
+  // UI loading state
+  btn.innerText = "Sending...";
+  btn.disabled = true;
+
+  const payload = {
+    name: name.value,
+    email: email.value,
+    message: msg.value
+  };
+
+  console.log("Sending data:", payload);
+
+  try {
+    const res = await fetch("https://portfolio-kpmz7y1gm-wwwsurajpagi-gmailcoms-projects.vercel.app/api/send-email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    console.log("HTTP status:", res.status);
+
+    const data = await res.json();
+    console.log("Response data:", data);
+
+    if (res.ok) {
+      result.className = 'form-msg success';
+      result.innerHTML = "✅ Message sent successfully!";
+      // Clear form
+      name.value = '';
+      email.value = '';
+      msg.value = '';
+    } else {
+      result.className = 'form-msg error';
+      result.innerHTML = `❌ Failed to send message: ${data.error || "Unknown error"}`;
+    }
+
+  } catch (error) {
+    console.error("Error sending message:", error);
+    result.className = 'form-msg error';
+    result.innerHTML = "❌ Failed to send message. Check console.";
+  } finally {
+    result.style.display = 'block';
+    btn.innerText = "Send Message";
+    btn.disabled = false;
+  }
+}
  
