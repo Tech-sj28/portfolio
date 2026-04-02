@@ -1,27 +1,21 @@
  
-  /* ────────────────────────────────
-     LOADER
-  ──────────────────────────────── */
-//   window.addEventListener('load', () => {
-//     setTimeout(() => {
-//       const loader = document.getElementById('loader');
-//       loader.classList.add('hidden');
-//       setTimeout(() => loader.remove(), 600);
-//     }, 800);
-//   });
+  /* LOADER */
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      const loader = document.getElementById('loader');
+      loader.classList.add('hidden');
+      setTimeout(() => loader.remove(), 600);
+    }, 800);
+  });
 
-  /* ────────────────────────────────
-     SCROLL PROGRESS BAR
-  ──────────────────────────────── */
+  /*   SCROLL PROGRESS BAR*/
   window.addEventListener('scroll', () => {
     const scrolled = window.scrollY;
     const total = document.documentElement.scrollHeight - window.innerHeight;
     document.getElementById('progress-bar').style.width = (scrolled / total * 100) + '%';
   });
 
-  /* ────────────────────────────────
-     NAVBAR: transparent → solid on scroll
-  ──────────────────────────────── */
+  /* NAVBAR: transparent → solid on scroll */
   window.addEventListener('scroll', () => {
     const nb = document.getElementById('navbar');
     nb.classList.toggle('scrolled', window.scrollY > 40);
@@ -40,9 +34,7 @@
     });
   });
 
-  /* ────────────────────────────────
-     MOBILE MENU TOGGLE
-  ──────────────────────────────── */
+  /* MOBILE MENU TOGGLE */
   document.getElementById('navToggler').addEventListener('click', () => {
     const m = document.getElementById('mobileMenu');
     const isOpen = m.style.display === 'block';
@@ -58,9 +50,7 @@
     });
   });
 
-  /* ────────────────────────────────
-     TYPING ANIMATION
-  ──────────────────────────────── */
+  /* TYPING ANIMATION*/
   const phrases = [
     'Full Stack Developer',
     'React.js Enthusiast',
@@ -85,9 +75,7 @@
   }
   setTimeout(type, 800);
 
-  /* ────────────────────────────────
-     SCROLL REVEAL (Intersection Observer)
-  ──────────────────────────────── */
+  /* SCROLL REVEAL (Intersection Observer) */
   const revealEls = document.querySelectorAll('.reveal');
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(e => {
@@ -99,9 +87,7 @@
   }, { threshold: 0.12 });
   revealEls.forEach(el => observer.observe(el));
 
-  /* ────────────────────────────────
-     CONTACT FORM VALIDATION
-  ──────────────────────────────── */
+  /*  CONTACT FORM VALIDATION */
 // Initialize EmailJS
 
   (function () {
