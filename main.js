@@ -145,7 +145,11 @@ async function submitForm() {
     const res = await fetch("/api/send-email", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+      body: JSON.stringify({
+        name: name,
+        email: email,
+        message: message
+      })
     });
 
     console.log("HTTP status:", res.status);
