@@ -144,12 +144,10 @@ async function submitForm() {
   try {
     const res = await fetch("/api/send-email", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: name,
-        email: email,
-        message: message
-      })
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload) // ✅ FIXED HERE
     });
 
     console.log("HTTP status:", res.status);
@@ -160,6 +158,7 @@ async function submitForm() {
     if (res.ok) {
       result.className = 'form-msg success';
       result.innerHTML = "✅ Message sent successfully!";
+
       // Clear form
       name.value = '';
       email.value = '';
